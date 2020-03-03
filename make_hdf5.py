@@ -13,7 +13,7 @@ if __name__ == '__main__':
 		
 		write_line_hdf5('example_1D.h5',time,vals)
 
-	init_hdf5('example_2D.h5')
+	init_hdf5('example_2D_01.h5')
 	for i in range(100):
 		time= i
 
@@ -26,4 +26,19 @@ if __name__ == '__main__':
 			[np.sin(0.01*time*x*y) for x in x_coords]
 			for y in y_coords
 		])
-		write_line_hdf5('example_2D.h5',time,vals)
+		write_line_hdf5('example_2D_01.h5',time,vals)
+
+	init_hdf5('example_2D_02.h5')
+	for i in range(100):
+		time= i
+
+		cols = 100
+		rows = 100
+		x_coords = np.linspace(-2*np.pi, 2*np.pi, cols+1)
+		y_coords = np.linspace(-2*np.pi, 2*np.pi, rows+1)
+
+		vals= np.array([
+			[np.cos(0.01*time*x*y) for x in x_coords]
+			for y in y_coords
+		])
+		write_line_hdf5('example_2D_02.h5',time,vals)

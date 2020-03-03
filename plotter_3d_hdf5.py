@@ -60,23 +60,20 @@ class Plotter(QtGui.QWidget):
 		self.load_btn.clicked.connect(self.handleButton)
 		self.layout.addWidget(self.load_btn, 0, 0)
 #----------------------------------------------------------------------------
-		self.step_label = QtGui.QLabel('time step size: ', self)
-		self.layout.addWidget(self.step_label, 1, 0)
-#----------------------------------------------------------------------------
 		self.enter_step = QtGui.QLineEdit('1', self)
 		self.enter_step.setFixedWidth(100)
-		self.layout.addWidget(self.enter_step, 2, 0)
+		self.layout.addWidget(self.enter_step, 1, 0)
 #----------------------------------------------------------------------------
-		self.display_t_step = QtGui.QLabel('time step = 00000', self)
-		self.layout.addWidget(self.display_t_step, 3, 0)
+		self.display_step = QtGui.QLabel('step = 00000', self)
+		self.layout.addWidget(self.display_step, 2, 0)
 #----------------------------------------------------------------------------
 		self.display_norm = QtGui.QLabel('norm = 00000', self)
-		self.layout.addWidget(self.display_norm, 4, 0)
+		self.layout.addWidget(self.display_norm, 3, 0)
 #----------------------------------------------------------------------------
 		self.play_btn = QtGui.QPushButton('Play', self)
 		self.play_btn.setCheckable(True)
 		self.play_btn.clicked.connect(self.play_btn_state)
-		self.layout.addWidget(self.play_btn, 5, 0)
+		self.layout.addWidget(self.play_btn, 4, 0)
 #----------------------------------------------------------------------------
 ## for 3d viewing		
 		self.plotWindow = gl.GLViewWidget(self)
@@ -93,15 +90,10 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 ## define global variables to be used by applet
 		self.filename = ''
-		self.n = 0
-		self.norm = 1
 		self.step = 1
+		self.norm = 1
 		self.maxn = 0
 		self.plot_num = 0
-
-		self.step1 = 1
-		self.step2 = 1
-		self.step3 = 1
 
 		self.color = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 		self.penwidth = 3
@@ -118,9 +110,9 @@ class Plotter(QtGui.QWidget):
 			self.timer.stop()
 ##############################################################################
 	def advance_n(self):
-		if(self.n+self.step < self.maxn):
-			self.n += self.step
-			self.update_plot_n()
+		if(self.step+1 < self.maxn):
+			self.step+= 1
+			self.update_plot_step()
 		else:
 			self.timer.stop()
 			self.play_btn.toggle()
@@ -130,7 +122,7 @@ class Plotter(QtGui.QWidget):
 		paths, _ = QtGui.QFileDialog.getOpenFileNames(self, title)
 		for path in paths:
 			self.load_data(path)
-		self.update_plot_n()
+		self.update_plot_step()
 ##############################################################################
 ##TODO:  operations on arrays.  It would be nice to implement this through
 ##       the control window; have each loaded array be assigned to its own
@@ -181,12 +173,12 @@ class Plotter(QtGui.QWidget):
 				0.01, ## red 1
 				0,    ## red 2
 				0.01, ## red 3
-				0.01, ## green 1
+				0.5,  ## green 1
 				0,    ## green 2
-				0.05, ## green 3
-				1,    ## blue 1
-				-1,   ## blue 2
-				1     ## blue 3
+				0.5,  ## green 3
+				0.99, ## blue 1
+				0,    ## blue 2
+				0.99  ## blue 3
 			])
 			self.plots[-1].setData(z=vals[0])
 			self.plotWindow.addItem(self.plots[-1])
@@ -199,14 +191,14 @@ class Plotter(QtGui.QWidget):
 		self.keyPressed.emit(event)
 		self.step = int(str(self.enter_step.text()))
 ##############################################################################
-	def update_plot_n(self):
+	def update_plot_step(self):
 		self.compute_norm()
 		self.update_display()
 		if (self.plot_num<=0):
 			raise ValueError("self.plot_num<=0")
 		for i in range(self.plot_num):
 			self.plots[i].setData(
-				z=self.var_arr[i,self.n, :, :]/self.norm
+				z=self.var_arr[i,self.step, :, :]/self.norm
 			)
 		return 0
 ##############################################################################
@@ -214,14 +206,14 @@ class Plotter(QtGui.QWidget):
 		self.norm=0
 		for i in range(self.plot_num):
 			self.norm= max(
-				abs(self.var_arr[i,self.n, :, :]).max(),
+				abs(self.var_arr[i,self.step, :, :]).max(),
 				self.norm
 			)
 		if (self.norm==0):
 			self.norm= 1
 ##############################################################################
 	def update_display(self):
-		self.display_t_step.setText('t =  ' + str(self.n))
+		self.display_step.setText('t = ' + str(self.step))
 		self.display_norm.setText('norm = ' + str(self.norm))
 ##############################################################################
 ## if press 'enter' then +1 step
@@ -230,18 +222,17 @@ class Plotter(QtGui.QWidget):
 	def on_key(self, event):
 		if(event.key() == QtCore.Qt.Key_Enter):
 			self.step = int(str(self.enter_step.text()))
-			#print('step changed to'+str(self.step))
 		elif(event.key() == QtCore.Qt.Key_Q):
 			print('Exiting')
 			self.deleteLater()
 		elif(event.key() == QtCore.Qt.Key_Right):
-			if(self.n+self.step < self.maxn):
-				self.n += self.step
-				self.update_plot_n()
+			if(self.step+1 < self.maxn):
+				self.step += 1 
+				self.update_plot_step()
 			elif event.key() == QtCore.Qt.Key_Left:
-				if(self.n-self.step >= 0):
-					self.n -= self.step
-					self.update_plot_n()
+				if(self.step-1 >= 0):
+					self.step-= 1 
+					self.update_plot_step()
 ##############################################################################
 ##############################################################################
 def main():
