@@ -39,6 +39,47 @@ class Plotter(QtGui.QWidget):
 		self.layout = QtGui.QGridLayout()
 		self.setLayout(self.layout)
 #----------------------------------------------------------------------------
+		loc= 0
+#----------------------------------------------------------------------------
+		self.load_btn = QtGui.QPushButton('Select Files', self)
+		self.load_btn.clicked.connect(self.handleButton)
+		self.layout.addWidget(self.load_btn, loc, 0)
+		loc+=1
+#----------------------------------------------------------------------------
+		
+#----------------------------------------------------------------------------
+		self.set_step_label = QtGui.QLabel('step:', self)
+		self.layout.addWidget(self.set_step_label, loc, 0)
+		loc+=1
+
+		self.enter_step = QtGui.QLineEdit('1', self)
+		self.enter_step.setFixedWidth(100)
+		self.layout.addWidget(self.enter_step, loc, 0)
+		loc+=1
+#----------------------------------------------------------------------------
+		self.set_zoom_label = QtGui.QLabel('zoom:', self)
+		self.layout.addWidget(self.set_zoom_label, loc, 0)
+		loc+=1
+
+		self.enter_zoom = QtGui.QLineEdit('1', self)
+		self.enter_zoom.setFixedWidth(100)
+		self.layout.addWidget(self.enter_zoom, loc, 0)
+		loc+=1
+#----------------------------------------------------------------------------
+		self.display_step = QtGui.QLabel('step = 00000', self)
+		self.layout.addWidget(self.display_step, loc, 0)
+		loc+=1
+#----------------------------------------------------------------------------
+		self.display_norm = QtGui.QLabel('infty norm = 00000', self)
+		self.layout.addWidget(self.display_norm, loc, 0)
+		loc+=1
+#----------------------------------------------------------------------------
+		self.play_btn = QtGui.QPushButton('Play', self)
+		self.play_btn.setCheckable(True)
+		self.play_btn.clicked.connect(self.play_btn_state)
+		self.layout.addWidget(self.play_btn, loc, 0)
+		loc+=1
+#----------------------------------------------------------------------------
 # Create some widgets to be placed inside
 #----------------------------------------------------------------------------
 		text = (
@@ -50,33 +91,15 @@ class Plotter(QtGui.QWidget):
 		NS = {'pg': pg, 'np': np, 'self':self}
 		self.layout.addWidget(
 			pyqtgraph.console.ConsoleWidget(
-				namespace=NS, text=text),6, 0, 3, 1
+				namespace=NS, text=text),loc, 0, 3, 1
 		)
-#----------------------------------------------------------------------------
-		self.load_btn = QtGui.QPushButton('Select Files', self)
-		self.load_btn.clicked.connect(self.handleButton)
-		self.layout.addWidget(self.load_btn, 0, 0)
-#----------------------------------------------------------------------------
-		self.enter_step = QtGui.QLineEdit('1', self)
-		self.enter_step.setFixedWidth(100)
-		self.layout.addWidget(self.enter_step, 1, 0)
-#----------------------------------------------------------------------------
-		self.display_step = QtGui.QLabel('step = 00000', self)
-		self.layout.addWidget(self.display_step, 2, 0)
-#----------------------------------------------------------------------------
-		self.display_norm = QtGui.QLabel('norm = 00000', self)
-		self.layout.addWidget(self.display_norm, 3, 0)
-#----------------------------------------------------------------------------
-		self.play_btn = QtGui.QPushButton('Play', self)
-		self.play_btn.setCheckable(True)
-		self.play_btn.clicked.connect(self.play_btn_state)
-		self.layout.addWidget(self.play_btn, 4, 0)
+		loc+=1
 #----------------------------------------------------------------------------
 ## for 3d viewing		
 		self.plotWindow = gl.GLViewWidget(self)
-		self.plotWindow.setCameraPosition(distance=15)
+		self.plotWindow.setCameraPosition(distance=10)
 
-		self.layout.addWidget(self.plotWindow, 0, 1, 9, 1)
+		self.layout.addWidget(self.plotWindow, 0, 1, loc+3, 1)
 
 		self.plots= []
 #----------------------------------------------------------------------------
@@ -89,6 +112,7 @@ class Plotter(QtGui.QWidget):
 		self.filename = ''
 		self.step = 1
 		self.norm = 1
+		self.zoom = 1
 		self.maxn = 0
 		self.plot_num = 0
 
@@ -161,8 +185,8 @@ class Plotter(QtGui.QWidget):
 		if (len(vals.shape)==3):
 			self.plots.append(
 				gl.GLSurfacePlotItem(
-					x= np.linspace(-5.0,5.0,vals[0].shape[0]),
-					y= np.linspace(-5.0,5.0,vals[0].shape[1]),
+					x= np.linspace(-2.5,2.5,vals[0].shape[0]),
+					y= np.linspace(-2.5,2.5,vals[0].shape[1]),
 					shader='heightColor',
 					computeNormals=False,
 					smooth=False
@@ -188,7 +212,10 @@ class Plotter(QtGui.QWidget):
 	def keyPressEvent(self, event):
 		super(Plotter, self).keyPressEvent(event)
 		self.keyPressed.emit(event)
-		self.step = int(str(self.enter_step.text()))
+		self.step = int(  str(self.enter_step.text()))
+		self.zoom = float(str(self.enter_zoom.text()))
+
+		self.update_plot_step()
 ##############################################################################
 	def update_plot_step(self):
 		self.compute_norm()
@@ -197,7 +224,7 @@ class Plotter(QtGui.QWidget):
 			raise ValueError("self.plot_num<=0")
 		for i in range(self.plot_num):
 			self.plots[i].setData(
-				z=self.var_arr[i,self.step, :, :]/self.norm
+				z=self.var_arr[i,self.step, :, :]/(self.norm/self.zoom)
 			)
 		return 0
 ##############################################################################
@@ -213,15 +240,12 @@ class Plotter(QtGui.QWidget):
 ##############################################################################
 	def update_display(self):
 		self.display_step.setText('step = {}'.format(self.step))
-		self.display_norm.setText('norm = {:.6e}'.format(self.norm))
+		self.display_norm.setText('infty norm = {:.6e}'.format(self.norm))
 ##############################################################################
-## if press 'enter' then +1 step
 ## if press 'q' then closes the application
 ## if press right/left arrow thentime step +1/-1
 	def on_key(self, event):
-		if(event.key() == QtCore.Qt.Key_Enter):
-			self.step = int(str(self.enter_step.text()))
-		elif(event.key() == QtCore.Qt.Key_Q):
+		if(event.key() == QtCore.Qt.Key_Q):
 			print('Exiting')
 			self.deleteLater()
 		else:
