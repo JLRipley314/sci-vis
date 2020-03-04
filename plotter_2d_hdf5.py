@@ -39,14 +39,15 @@ class Plotter(QtGui.QWidget):
 		self.layout = QtGui.QGridLayout()
 		self.setLayout(self.layout)
 #----------------------------------------------------------------------------
+## create Widgets for the gui. loc is the horizontal location,
+## starting from the top
+#----------------------------------------------------------------------------
 		loc= 0
 #----------------------------------------------------------------------------
 		self.load_btn = QtGui.QPushButton('Select Files', self)
 		self.load_btn.clicked.connect(self.handleButton)
 		self.layout.addWidget(self.load_btn, loc, 0)
 		loc+=1
-#----------------------------------------------------------------------------
-		
 #----------------------------------------------------------------------------
 		self.set_step_label = QtGui.QLabel('step:', self)
 		self.layout.addWidget(self.set_step_label, loc, 0)
@@ -82,6 +83,7 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 # Create some widgets to be placed inside
 #----------------------------------------------------------------------------
+		consol_height= 3
 		text = (
 		 "Python 3 console. "
 		+"Namespace includes numpy as 'np', pyqtgraph as 'pg', and 'self'. "
@@ -91,7 +93,7 @@ class Plotter(QtGui.QWidget):
 		NS = {'pg': pg, 'np': np, 'self':self}
 		self.layout.addWidget(
 			pyqtgraph.console.ConsoleWidget(
-				namespace=NS, text=text),loc, 0, 3, 1
+				namespace=NS, text=text),loc, 0, consol_height, 1
 		)
 		loc+=1
 #----------------------------------------------------------------------------
@@ -99,7 +101,7 @@ class Plotter(QtGui.QWidget):
 		self.plotWindow = gl.GLViewWidget(self)
 		self.plotWindow.setCameraPosition(distance=10)
 
-		self.layout.addWidget(self.plotWindow, 0, 1, loc+3, 1)
+		self.layout.addWidget(self.plotWindow, 0, 1, loc+consol_height, 1)
 
 		self.plots= []
 #----------------------------------------------------------------------------
