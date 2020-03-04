@@ -11,11 +11,6 @@ import pyqtgraph.console
 #-----------------------------------------------------------------------------
 ## for manipulating hdf5 
 from io_hdf5 import *
-#-----------------------------------------------------------------------------
-## for coloring of solutions 
-import matplotlib.pyplot as plt
-cmap= plt.get_cmap('jet')
-rgba_img = cmap(1.)
 ##############################################################################
 ##############################################################################
 class Plotter(QtGui.QWidget):
@@ -46,7 +41,6 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 # Create some widgets to be placed inside
 #----------------------------------------------------------------------------
-#TODO: testing this -- console widget
 		text = (
 		 "Python 3 console. "
 		+"Namespace includes numpy as 'np', pyqtgraph as 'pg', and 'self'. "
@@ -89,7 +83,7 @@ class Plotter(QtGui.QWidget):
 ## for playing the movies
 		self.timer = QtCore.QTimer(self)
 		self.timer.timeout.connect(self.advance_n)
-		self.update_time_ms = 100
+		self.update_time_ms = 50
 #----------------------------------------------------------------------------
 ## define global variables to be used by applet
 		self.filename = ''
