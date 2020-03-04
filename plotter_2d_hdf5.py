@@ -176,13 +176,13 @@ class Plotter(QtGui.QWidget):
 			)
 			self.plots[-1].shader()['colorMap'] = np.array([
 				-0.3, ## red 1
-				 0.0, ## red 2
+				 0.1, ## red 2
 				 0.3, ## red 3
 				-0.6, ## green 1
-				 0.0, ## green 2
+				-0.2, ## green 2
 				 0.6, ## green 3
 				-1.0, ## blue 1
-				 0.0, ## blue 2
+				 0.3, ## blue 2
 				 1.0  ## blue 3
 			])
 			self.plots[-1].setData(z=vals[0])
