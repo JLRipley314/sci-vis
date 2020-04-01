@@ -81,33 +81,17 @@ class Plotter(QtGui.QWidget):
 		self.layout.addWidget(self.play_btn, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-# Create some widgets to be placed inside
-#----------------------------------------------------------------------------
-		consol_height= 3
-		text = (
-		 "Python 3 console. "
-		+"Namespace includes numpy as 'np', pyqtgraph as 'pg', and 'self'. "
-		+"Data loaded through the 'Select Files' button is stored in 'self.var_arr'. "
-		+"Plot directly to built-in window with self.plotWindow.plot() and plot to pop-out window with pg.plot()."
-		)
-		NS = {'pg': pg, 'np': np, 'self':self}
-		self.layout.addWidget(
-			pyqtgraph.console.ConsoleWidget(
-				namespace=NS, text=text),loc, 0, consol_height, 1
-		)
-		loc+=1
-#----------------------------------------------------------------------------
 ## for 3d viewing		
 		self.plotWindow = gl.GLViewWidget(self)
 		self.plotWindow.setCameraPosition(distance=10)
 
-		self.layout.addWidget(self.plotWindow, 0, 1, loc+consol_height, 1)
+		self.layout.addWidget(self.plotWindow, 0, 1, loc, 1)
 
 		self.plots= []
 #----------------------------------------------------------------------------
 ## for playing the movies
 		self.timer = QtCore.QTimer(self)
-		self.timer.timeout.connect(self.advance_n)
+		self.timer.timeout.connect(self.advance_step)
 		self.update_time_ms = 50
 #----------------------------------------------------------------------------
 ## define global variables to be used by applet
@@ -115,7 +99,7 @@ class Plotter(QtGui.QWidget):
 		self.step = 1
 		self.norm = 1
 		self.zoom = 1
-		self.maxn = 0
+		self.maxsteps = 0
 		self.plot_num = 0
 
 		self.color = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
@@ -132,8 +116,8 @@ class Plotter(QtGui.QWidget):
 		else:
 			self.timer.stop()
 ##############################################################################
-	def advance_n(self):
-		if(self.step+1 < self.maxn):
+	def advance_step(self):
+		if(self.step+1 < self.maxsteps):
 			self.step+= 1
 			self.update_plot_step()
 		else:
@@ -147,28 +131,18 @@ class Plotter(QtGui.QWidget):
 			self.load_data(path)
 		self.update_plot_step()
 ##############################################################################
-##TODO:  operations on arrays.  It would be nice to implement this through
-##       the control window; have each loaded array be assigned to its own
-##       variable, and we could then plot |arr|, or arr.transpose(), etc.
-##############################################################################
 	def load_data(self, filename):
-		y = read_hdf5(str(filename))
+		y = np.array(read_hdf5(str(filename)))
 		if (self.plot_num==0):
-			self.var_arr   = np.array([y])
+			self.maxsteps= np.shape(y)[0]
+			self.var_arr= {} 
+			self.var_arr[self.plot_num]= y
 			self.var_names = self.prune_string(filename)
 			self.plot_data(self.var_arr[0])
 		else:
-			self.var_arr   = np.append(self.var_arr, y)
+			self.maxsteps= min(self.maxsteps,np.shape(y)[0])
+			self.var_arr[self.plot_num]= y
 			self.var_names = np.append(self.var_names, self.prune_string(filename))
-#-----------------------------------------------------------------------------
-## have to make array with correct indexing
-			if (len(y.shape)==3):
-				self.var_arr= np.reshape(
-					self.var_arr,
-					(self.plot_num+1, np.shape(y)[0], np.shape(y)[1], np.shape(y)[2])
-				)
-			else:
-				raise ValueError("len(y.shape)!=3")
 			self.plot_data(self.var_arr[self.plot_num])
 		self.plot_num+= 1
 		print('loaded'+str(filename))
@@ -183,7 +157,6 @@ class Plotter(QtGui.QWidget):
 ## the x-y space is set to be a [-5,5]x[-5,5] box
 ##############################################################################
 	def plot_data(self, vals) -> None:
-		self.maxn = np.shape(vals)[0]
 		if (len(vals.shape)==3):
 			self.plots.append(
 				gl.GLSurfacePlotItem(
@@ -226,7 +199,7 @@ class Plotter(QtGui.QWidget):
 			raise ValueError("self.plot_num<=0")
 		for i in range(self.plot_num):
 			self.plots[i].setData(
-				z=self.var_arr[i,self.step, :, :]/(self.norm/self.zoom)
+				z=self.var_arr[i][self.step, :, :]/(self.norm/self.zoom)
 			)
 		return 0
 ##############################################################################
@@ -234,7 +207,7 @@ class Plotter(QtGui.QWidget):
 		self.norm=0
 		for i in range(self.plot_num):
 			self.norm= max(
-				abs(self.var_arr[i,self.step, :, :]).max(),
+				abs(max(self.var_arr[i][self.step, :, :],key=abs)),
 				self.norm
 			)
 		if (self.norm==0):
@@ -262,4 +235,3 @@ def main():
 ##############################################################################
 if __name__ == '__main__':
 	main()
-
