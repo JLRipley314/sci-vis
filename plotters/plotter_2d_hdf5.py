@@ -9,7 +9,14 @@ import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 import pyqtgraph.console
 #-----------------------------------------------------------------------------
+import sys
+#-----------------------------------------------------------------------------
+## for manipulating csv 
+sys.path.insert(1, '/home/jripley/python_plotters/csv')
+from io_csv import *
+#-----------------------------------------------------------------------------
 ## for manipulating hdf5 
+sys.path.insert(1, '/home/jripley/python_plotters/hdf5')
 from io_hdf5 import *
 ##############################################################################
 ##############################################################################
@@ -132,7 +139,15 @@ class Plotter(QtGui.QWidget):
 		self.update_plot_step()
 ##############################################################################
 	def load_data(self, filename):
-		y = np.array(read_hdf5(str(filename)))
+#-----------------------------------------------------------------------------
+		y= np.array([[[]]])
+		if (str(filename).endswith('.csv'):
+			y= np.array(read_csv_1d(str(filename)))
+		elif (str(filename).endswith('.hdf5'):
+			y= np.array(read_hdf5(str(filename)))
+		else:
+			raise ValueError('improper file extension')
+#-----------------------------------------------------------------------------
 		if (self.plot_num==0):
 			self.maxsteps= np.shape(y)[0]
 			self.var_arr= {} 

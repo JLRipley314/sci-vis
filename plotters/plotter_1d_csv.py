@@ -1,12 +1,19 @@
+#-----------------------------------------------------------------------------
 from PyQt5 import QtGui, QtCore
 import pyqtgraph as pg
 import pyqtgraph.console
 import numpy as np
 import sys
-
-### for manipulating csv 
+#-----------------------------------------------------------------------------
+import sys
+## for manipulating csv 
+#-----------------------------------------------------------------------------
+sys.path.insert(1, '/home/jripley/python_plotters/csv')
 from io_csv import *
-
+#-----------------------------------------------------------------------------
+## for manipulating hdf5 
+sys.path.insert(1, '/home/jripley/python_plotters/hdf5')
+from io_hdf5 import *
 ##############################################################################
 ##############################################################################
 class Plotter(QtGui.QWidget):
@@ -113,7 +120,15 @@ class Plotter(QtGui.QWidget):
 #       variable, and we could then plot |arr|, or arr.transpose(), etc.
 ##############################################################################
         def load_data(self, filename):
-                y= read_csv_1d(str(filename))
+#-----------------------------------------------------------------------------
+		y= np.array([[]])
+		if (str(filename).endswith('.csv'):
+			y= np.array(read_csv_1d(str(filename)))
+		elif (str(filename).endswith('.hdf5'):
+			y= np.array(read_hdf5(str(filename)))
+		else:
+			raise ValueError('improper file extension')
+#-----------------------------------------------------------------------------
                 if (self.plot_num==0):
                         self.var_arr= {}
                         self.var_arr[self.plot_num]= np.array(y)
