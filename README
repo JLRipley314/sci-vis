@@ -6,12 +6,6 @@ dependencies:
 - pyqtgraph
 
 There are two different functions for 1D and 2D data that read
-from hdf5 files.
-
-To call 1D plotter type:	
-	python plotter_1d_hdf5.py
-
-To call 2D plotter type:	
-	python plotter_2d_hdf5.py
+from csv or hdf5 files.
 
 buyer beware: this software is still very much a work in progress
