@@ -144,11 +144,9 @@ class Plotter(QtGui.QWidget):
 ##############################################################################
 	def load_data(self, filename:str)->None:
 #-----------------------------------------------------------------------------
-		y= np.array([[[]]])
-		if (str(filename).endswith('.csv')):
-			y= np.array(read_csv_1d(str(filename)))
-		elif (str(filename).endswith('.h5')):
-			y= np.array(read_hdf5(str(filename)))
+		y= np.array([])
+		if (str(filename).endswith('.h5')):
+			y= np.array(read_vals_hdf5(str(filename)))
 		else:
 			raise ValueError('improper file extension')
 #-----------------------------------------------------------------------------
