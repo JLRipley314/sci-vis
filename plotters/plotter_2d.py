@@ -141,9 +141,9 @@ class Plotter(QtGui.QWidget):
 	def load_data(self, filename):
 #-----------------------------------------------------------------------------
 		y= np.array([[[]]])
-		if (str(filename).endswith('.csv'):
+		if (str(filename).endswith('.csv')):
 			y= np.array(read_csv_1d(str(filename)))
-		elif (str(filename).endswith('.hdf5'):
+		elif (str(filename).endswith('.h5')):
 			y= np.array(read_hdf5(str(filename)))
 		else:
 			raise ValueError('improper file extension')
@@ -222,7 +222,7 @@ class Plotter(QtGui.QWidget):
 		self.norm=0
 		for i in range(self.plot_num):
 			self.norm= max(
-				abs(max(self.var_arr[i][self.step, :, :],key=abs)),
+				abs(self.var_arr[i][self.step, :, :]).max(),
 				self.norm
 			)
 		if (self.norm==0):

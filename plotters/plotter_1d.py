@@ -6,8 +6,8 @@ import numpy as np
 import sys
 #-----------------------------------------------------------------------------
 import sys
-## for manipulating csv 
 #-----------------------------------------------------------------------------
+## for manipulating csv 
 sys.path.insert(1, '/home/jripley/python_plotters/csv')
 from io_csv import *
 #-----------------------------------------------------------------------------
@@ -122,9 +122,9 @@ class Plotter(QtGui.QWidget):
         def load_data(self, filename):
 #-----------------------------------------------------------------------------
 		y= np.array([[]])
-		if (str(filename).endswith('.csv'):
+		if (str(filename).endswith('.csv')):
 			y= np.array(read_csv_1d(str(filename)))
-		elif (str(filename).endswith('.hdf5'):
+		elif (str(filename).endswith('.h5')):
 			y= np.array(read_hdf5(str(filename)))
 		else:
 			raise ValueError('improper file extension')
