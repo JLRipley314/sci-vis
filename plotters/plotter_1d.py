@@ -29,7 +29,7 @@ class Plotter(QtGui.QWidget):
 
                 self.initUI()
 ##############################################################################
-        def initUI(self):
+        def initUI(self)->None:
 #----------------------------------------------------------------------------
                 self.setWindowTitle('Plotter')
                 self.keyPressed.connect(self.on_key)
@@ -94,13 +94,13 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
                 self.show()
 ##############################################################################
-        def play_btn_state(self):
+        def play_btn_state(self)->None:
                 if self.play_btn.isChecked():
                         self.timer.start(self.update_time_ms)
                 else:
                         self.timer.stop()
 ##############################################################################
-        def advance_level(self):
+        def advance_level(self)->None:
                 if(self.level+1 < self.maxlevels):
                         self.level+= 1
                         self.update_plot_level()
@@ -108,7 +108,7 @@ class Plotter(QtGui.QWidget):
                         self.timer.stop()
                         self.play_btn.toggle()
 ##############################################################################
-        def handleButton(self):
+        def handleButton(self)->None:
                 title    = self.load_btn.text()
                 paths, _ = QtGui.QFileDialog.getOpenFileNames(self, title)
                 for path in paths:
@@ -119,7 +119,7 @@ class Plotter(QtGui.QWidget):
 #       the control window; have each loaded array be assigned to its own
 #       variable, and we could then plot |arr|, or arr.transpose(), etc.
 ##############################################################################
-        def load_data(self, filename):
+        def load_data(self, filename:str)->None:
 #-----------------------------------------------------------------------------
 		y= np.array([[]])
 		if (str(filename).endswith('.csv')):
@@ -141,15 +141,14 @@ class Plotter(QtGui.QWidget):
                 self.plot_data(self.plot_num)
                 self.plot_num+= 1
                 print('loaded'+str(filename))
-                return 0
 ##############################################################################
-        def prune_string(self, filename):
-                loc_start = str(filename).rfind('/')+1
-                loc_end = str(filename).rfind('.')
-                name_str = str(filename)[loc_start:loc_end]
+        def prune_string(self, filename:str)->str:
+                loc_start= str(filename).rfind('/')+1
+                loc_end= str(filename).rfind('.')
+                name_str= str(filename)[loc_start:loc_end]
                 return name_str
 ##############################################################################
-        def plot_data(self, index) -> None:
+        def plot_data(self, index:int) -> None:
                 y= self.var_arr[index]
                 nx = np.shape(y)[1]
                 x= [float(i)/nx for i in range(nx)]
@@ -169,22 +168,21 @@ class Plotter(QtGui.QWidget):
 
                 self.update_plot_level()
 ##############################################################################
-        def update_plot_level(self):
+        def update_plot_level(self)->None:
                 self.plotWindow.clear()
                 self.update_display()
                 if (self.plot_num<=0):
                         raise ValueError("self.plot_num<=0")
                 for i in range(self.plot_num):
                         self.plot_data(i)
-                return 0
 ##############################################################################
-        def update_display(self):
+        def update_display(self)->None:
                 self.display_level.setText('level = {}'.format(self.level))
 ##############################################################################
 ## if press 'enter' then go to that level 
 ## if press 'q' then closes the application
 ## if press right/left arrow then time level +1/-1
-        def on_key(self, event):
+        def on_key(self, event)->None:
                 if(event.key() == QtCore.Qt.Key_Enter):
                         self.level = int(str(self.enter_level.text()))
                         self.update_plot_level()

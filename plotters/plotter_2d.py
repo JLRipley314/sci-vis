@@ -33,7 +33,7 @@ class Plotter(QtGui.QWidget):
 
 		self.initUI()
 ##############################################################################
-	def initUI(self):
+	def initUI(self)->None:
 #----------------------------------------------------------------------------
 		self.setWindowTitle('Plotter')
 		self.keyPressed.connect(self.on_key)
@@ -117,13 +117,13 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 		self.show()
 ##############################################################################
-	def play_btn_state(self):
+	def play_btn_state(self)->None:
 		if self.play_btn.isChecked():
 			self.timer.start(self.update_time_ms)
 		else:
 			self.timer.stop()
 ##############################################################################
-	def advance_step(self):
+	def advance_step(self)->None:
 		if(self.step+1 < self.maxsteps):
 			self.step+= 1
 			self.update_plot_step()
@@ -131,14 +131,14 @@ class Plotter(QtGui.QWidget):
 			self.timer.stop()
 			self.play_btn.toggle()
 ##############################################################################
-	def handleButton(self):
+	def handleButton(self)->None:
 		title    = self.load_btn.text()
 		paths, _ = QtGui.QFileDialog.getOpenFileNames(self, title)
 		for path in paths:
 			self.load_data(path)
 		self.update_plot_step()
 ##############################################################################
-	def load_data(self, filename):
+	def load_data(self, filename:str)->None:
 #-----------------------------------------------------------------------------
 		y= np.array([[[]]])
 		if (str(filename).endswith('.csv')):
@@ -161,45 +161,42 @@ class Plotter(QtGui.QWidget):
 			self.plot_data(self.var_arr[self.plot_num])
 		self.plot_num+= 1
 		print('loaded'+str(filename))
-		return 0
 ##############################################################################
-	def prune_string(self, filename):
-		loc_start = str(filename).rfind('/')+1
-		loc_end = str(filename).rfind('.')
-		name_str = str(filename)[loc_start:loc_end]
+	def prune_string(self, filename:str)->str:
+		loc_start= str(filename).rfind('/')+1
+		loc_end= str(filename).rfind('.')
+		name_str= str(filename)[loc_start:loc_end]
 		return name_str
 ##############################################################################
 ## the x-y space is set to be a [-5,5]x[-5,5] box
 ##############################################################################
 	def plot_data(self, vals) -> None:
-		if (len(vals.shape)==3):
-			self.plots.append(
-				gl.GLSurfacePlotItem(
-					x= np.linspace(-2.5,2.5,vals[0].shape[0]),
-					y= np.linspace(-2.5,2.5,vals[0].shape[1]),
-					shader='heightColor',
-					computeNormals=False,
-					smooth=False
-				)
-			)
-			self.plots[-1].shader()['colorMap'] = np.array([
-				-0.3, ## red 1
-				 0.1, ## red 2
-				 0.3, ## red 3
-				-0.6, ## green 1
-				-0.2, ## green 2
-				 0.6, ## green 3
-				-1.0, ## blue 1
-				 0.3, ## blue 2
-				 1.0  ## blue 3
-			])
-			self.plots[-1].setData(z=vals[0])
-			self.plotWindow.addItem(self.plots[-1])
-		else:
+		if (len(vals.shape)!=3):
 			raise ValueError("len(y.shape)!=3")
-		return
+		self.plots.append(
+			gl.GLSurfacePlotItem(
+				x= np.linspace(-2.5,2.5,vals[0].shape[0]),
+				y= np.linspace(-2.5,2.5,vals[0].shape[1]),
+				shader='heightColor',
+				computeNormals=False,
+				smooth=False
+			)
+		)
+		self.plots[-1].shader()['colorMap'] = np.array([
+			-0.3, ## red 1
+			 0.1, ## red 2
+			 0.3, ## red 3
+			-0.6, ## green 1
+			-0.2, ## green 2
+			 0.6, ## green 3
+			-1.0, ## blue 1
+			 0.3, ## blue 2
+			 1.0  ## blue 3
+		])
+		self.plots[-1].setData(z=vals[0])
+		self.plotWindow.addItem(self.plots[-1])
 ##############################################################################
-	def keyPressEvent(self, event):
+	def keyPressEvent(self, event)->None:
 		super(Plotter, self).keyPressEvent(event)
 		self.keyPressed.emit(event)
 		self.step = int(  str(self.enter_step.text()))
@@ -207,7 +204,7 @@ class Plotter(QtGui.QWidget):
 
 		self.update_plot_step()
 ##############################################################################
-	def update_plot_step(self):
+	def update_plot_step(self)->None:
 		self.compute_norm()
 		self.update_display()
 		if (self.plot_num<=0):
@@ -216,9 +213,8 @@ class Plotter(QtGui.QWidget):
 			self.plots[i].setData(
 				z=self.var_arr[i][self.step, :, :]/(self.norm/self.zoom)
 			)
-		return 0
 ##############################################################################
-	def compute_norm(self):
+	def compute_norm(self)->None:
 		self.norm=0
 		for i in range(self.plot_num):
 			self.norm= max(
@@ -228,13 +224,13 @@ class Plotter(QtGui.QWidget):
 		if (self.norm==0):
 			self.norm= 1
 ##############################################################################
-	def update_display(self):
+	def update_display(self)->None:
 		self.display_step.setText('step = {}'.format(self.step))
 		self.display_norm.setText('infty norm = {:.6e}'.format(self.norm))
 ##############################################################################
 ## if press 'q' then closes the application
 ## if press right/left arrow thentime step +1/-1
-	def on_key(self, event):
+	def on_key(self, event)->None:
 		if(event.key() == QtCore.Qt.Key_Q):
 			print('Exiting')
 			self.deleteLater()
