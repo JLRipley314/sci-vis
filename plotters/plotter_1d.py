@@ -6,13 +6,17 @@ import numpy as np
 import sys
 #-----------------------------------------------------------------------------
 import sys
+from os.path import dirname, abspath
+#-----------------------------------------------------------------------------
+## get parent directory
+plot_dir= dirname(dirname(abspath(__file__)))
 #-----------------------------------------------------------------------------
 ## for manipulating csv 
-sys.path.insert(1, '/home/jripley/python_plotters/csv')
+sys.path.insert(1, plot_dir+'/csv')
 from io_csv import *
 #-----------------------------------------------------------------------------
 ## for manipulating hdf5 
-sys.path.insert(1, '/home/jripley/python_plotters/hdf5')
+sys.path.insert(1, plot_dir+'/hdf5')
 from io_hdf5 import *
 ##############################################################################
 ##############################################################################
