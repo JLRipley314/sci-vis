@@ -27,6 +27,7 @@ from io_hdf5 import *
 class Plotter(QtGui.QWidget):
 	keyPressed = QtCore.pyqtSignal(QtCore.QEvent)
 ##############################################################################
+## hard coded parameters for relative size of screen, etc
 	def __init__(self):
 		super(Plotter, self).__init__()
 
