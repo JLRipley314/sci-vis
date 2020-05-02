@@ -1,6 +1,6 @@
 scientific visualization functions in python3
 
-Alex Pandya wrote earlier versions of this software for
+Alex Pandya wrote an earlier version of this software for
 visualizing 1 dimensional time dependent data.
 
 dependencies:
