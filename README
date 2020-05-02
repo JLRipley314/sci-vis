@@ -1,5 +1,8 @@
 scientific visualization functions in python3
 
+Alex Pandya wrote earlier versions of this software for
+visualizing 1 dimensional time dependent data.
+
 dependencies:
 - numpy
 - h5py
@@ -8,4 +11,4 @@ dependencies:
 There are two different functions for 1D and 2D data that read
 from csv or hdf5 files.
 
-buyer beware: this software is still very much a work in progress
+buyer beware: this software is still a work in progress
