@@ -2,6 +2,11 @@ import numpy as np
 
 from typing import List
 
+import os, sys	
+from pathlib import Path
+path = Path(os.getcwd())
+sys.path.insert(1, '/hdf5')
+
 #-----------------------------------------------------------------------------
 ## basic functions 
 #-----------------------------------------------------------------------------
@@ -42,6 +47,8 @@ def read_csv_1d(name:str) -> List[List[float]]:
                 ]
         return vals
 #-----------------------------------------------------------------------------
+## format for 2d csv: time, nx, ny, arr
+#-----------------------------------------------------------------------------
 def read_vals_csv_2d(name:str) -> np.array:
 	name= set_extension(name)
 	vals= []
@@ -57,3 +64,31 @@ def read_vals_csv_2d(name:str) -> np.array:
 			vals.append(arr)
 	return np.array(vals)
 #-----------------------------------------------------------------------------
+def read_times_vals_csv_2d(name:str) -> (np.array,np.array):
+	name= set_extension(name)
+	times= []
+	vals= []
+	with open(name,'r') as f:
+		for line in f:
+			line= [v for v in line.split(',')]
+			time= float(line[1])
+			nx= int(line[1])
+			ny= int(line[2])
+			arr= np.zeros((nx,ny))
+			for i in range(nx):
+				for j in range(ny):
+					arr[i][j]= float(line[ny*i+j])
+			times.append(time)
+			vals.append(arr)
+	return times, np.array(vals)
+#-----------------------------------------------------------------------------
+def convert_csv_to_hdf5(name:str) -> None:
+	assert(name.endswith('.csv')
+	times, vals = read_times_vals_csv_2d(name)
+
+	name= name[:-4]+'.h5'
+
+	init_hdf5(name)
+
+	for i in range(len(time)):
+		write_line_hdf5(name,times[i],vals[i])
