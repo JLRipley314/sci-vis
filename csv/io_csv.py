@@ -42,3 +42,18 @@ def read_csv_1d(name:str) -> List[List[float]]:
                 ]
         return vals
 #-----------------------------------------------------------------------------
+def read_vals_csv_2d(name:str) -> np.array:
+	name= set_extension(name)
+	vals= []
+	with open(name,'r') as f:
+		for line in f:
+			line= [v for v in line.split(',')]
+			nx= int(line[1])
+			ny= int(line[2])
+			arr= np.zeros((nx,ny))
+			for i in range(nx):
+				for j in range(ny):
+					arr[i][j]= float(line[ny*i+j])
+			vals.append(arr)
+	return np.array(vals)
+#-----------------------------------------------------------------------------

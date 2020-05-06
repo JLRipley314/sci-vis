@@ -148,8 +148,11 @@ class Plotter(QtGui.QWidget):
 		y= np.array([])
 		if (str(filename).endswith('.h5')):
 			y= np.array(read_vals_hdf5(str(filename)))
+		elif (str(filename).endswith('.csv')):
+			y= np.array(read_vals_csv_2d(str(filename)))
 		else:
 			raise ValueError('improper file extension')
+		print(y.shape)
 #-----------------------------------------------------------------------------
 		if (self.plot_num==0):
 			self.maxsteps= np.shape(y)[0]
