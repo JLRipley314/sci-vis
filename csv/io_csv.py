@@ -3,8 +3,9 @@ import numpy as np
 from typing import List
 
 import os, sys	
-path = os.path.dirname(os.path.abspath(os.getcwd()))
-sys.path.insert(1, str(path)+'/hdf5')
+path = os.getcwd()
+print(path)
+sys.path.insert(1, str(path)+'/sci-vis/hdf5')
 
 from io_hdf5 import init_hdf5, write_line_hdf5
 #-----------------------------------------------------------------------------

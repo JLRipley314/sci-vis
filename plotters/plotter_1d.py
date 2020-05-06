@@ -5,11 +5,10 @@ import pyqtgraph.console
 import numpy as np
 import sys
 #-----------------------------------------------------------------------------
-import sys
-from os.path import dirname, abspath
+import os, sys
 #-----------------------------------------------------------------------------
 ## get parent directory
-plot_dir= dirname(dirname(abspath(__file__)))
+plot_dir= os.getcwd()+'/sci-vis'
 #-----------------------------------------------------------------------------
 ## for manipulating csv 
 sys.path.insert(1, plot_dir+'/csv')
