@@ -71,7 +71,7 @@ def read_times_vals_csv_2d(name:str) -> (np.array,np.array):
 	with open(name,'r') as f:
 		for line in f:
 			line= [v for v in line.split(',')]
-			time= float(line[1])
+			time= float(line[0])
 			nx= int(line[1])
 			ny= int(line[2])
 			arr= np.zeros((nx,ny))
