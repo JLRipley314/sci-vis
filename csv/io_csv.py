@@ -2,12 +2,7 @@ import numpy as np
 
 from typing import List
 
-import os, sys	
-path = os.getcwd()
-print(path)
-sys.path.insert(1, str(path)+'/sci-vis/hdf5')
-
-from io_hdf5 import init_hdf5, write_line_hdf5
+import sys	
 #-----------------------------------------------------------------------------
 ## basic functions 
 #-----------------------------------------------------------------------------
@@ -78,19 +73,7 @@ def read_times_vals_csv_2d(name:str) -> (np.array,np.array):
 			arr= np.zeros((nx,ny))
 			for i in range(nx):
 				for j in range(ny):
-					arr[i][j]= float(line[ny*i+j])
+					arr[i][j]= float(line[3+ny*i+j])
 			times.append(time)
 			vals.append(arr)
 	return times, np.array(vals)
-#-----------------------------------------------------------------------------
-def convert_csv_to_hdf5(name:str) -> None:
-	assert(name.endswith('.csv'))
-	times, vals = read_times_vals_csv_2d(name)
-	name= name[:-4]+'.h5'
-
-	print(name)
-	init_hdf5(name)
-	print("init done")
-
-	for i in range(len(time)):
-		write_line_hdf5(name,times[i],vals[i])
