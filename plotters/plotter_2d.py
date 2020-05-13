@@ -10,9 +10,9 @@ import pyqtgraph.opengl as gl
 import pyqtgraph.console
 #-----------------------------------------------------------------------------
 import sys
-from os.path import dirname, abspath
 #-----------------------------------------------------------------------------
 ## get parent directory
+from os.path import dirname, abspath
 plot_dir= dirname(dirname(abspath(__file__)))
 #-----------------------------------------------------------------------------
 ## for manipulating csv 

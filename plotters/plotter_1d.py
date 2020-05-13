@@ -8,7 +8,8 @@ import sys
 import os, sys
 #-----------------------------------------------------------------------------
 ## get parent directory
-plot_dir= os.getcwd()+'/sci-vis'
+from os.path import dirname, abspath
+plot_dir= dirname(dirname(abspath(__file__)))
 #-----------------------------------------------------------------------------
 ## for manipulating csv 
 sys.path.insert(1, plot_dir+'/csv')
