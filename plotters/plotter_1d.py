@@ -127,7 +127,7 @@ class Plotter(QtGui.QWidget):
 #-----------------------------------------------------------------------------
 		y= np.array([])
 		if (str(filename).endswith('.csv')):
-			y= np.array(read_csv_1d(str(filename)))
+			y= np.array(read_vals_csv_1d(str(filename)))
 		elif (str(filename).endswith('.h5')):
 			y= np.array(read_hdf5(str(filename)))
 		else:
