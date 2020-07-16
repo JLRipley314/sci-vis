@@ -65,7 +65,7 @@ class Plotter(QtGui.QWidget):
 		self.layout.addWidget(self.set_step_label, loc, 0)
 		loc+=1
 
-		self.enter_step = QtGui.QLineEdit('1', self)
+		self.enter_step = QtGui.QLineEdit('0', self)
 		self.enter_step.setFixedWidth(100)
 		self.layout.addWidget(self.enter_step, loc, 0)
 		loc+=1
@@ -108,7 +108,7 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 ## define global variables to be used by applet
 		self.filename = ''
-		self.step = 1
+		self.step = 0
 		self.norm = 1
 		self.zoom = 1
 		self.maxsteps = 0
