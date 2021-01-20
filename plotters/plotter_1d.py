@@ -60,7 +60,7 @@ class Plotter(QtGui.QWidget):
 		self.layout.addWidget(self.set_level_label, loc, 0)
 		loc+=1
 
-		self.enter_level= QtGui.QLineEdit('1', self)
+		self.enter_level= QtGui.QLineEdit('0', self)
 		self.enter_level.setFixedWidth(100)
 		self.layout.addWidget(self.enter_level, loc, 0)
 		loc+=1
@@ -86,7 +86,7 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 ## define global variables to be used by applet
 		self.filename = ''
-		self.level = 1
+		self.level = 0
 		self.maxlevels = 0
 		self.plot_num = 0
 
