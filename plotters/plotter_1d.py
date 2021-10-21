@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtWidgets, QtCore
 import pyqtgraph as pg
 import pyqtgraph.console
 import numpy as np
@@ -20,7 +20,7 @@ sys.path.insert(1, plot_dir+'/hdf5')
 from io_hdf5 import *
 ##############################################################################
 ##############################################################################
-class Plotter(QtGui.QWidget):
+class Plotter(QtWidgets.QWidget):
 	keyPressed = QtCore.pyqtSignal(QtCore.QEvent)
 ##############################################################################
 	def __init__(self):
@@ -43,7 +43,7 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 ## Create a grid layout to manage the widgets size and position
 ## allows for plot window to dynamically resize with size of gui
-		self.layout = QtGui.QGridLayout()
+		self.layout = QtWidgets.QGridLayout()
 		self.setLayout(self.layout)
 #----------------------------------------------------------------------------
 ## create Widgets for the gui. loc is the horizontal location,
@@ -51,25 +51,25 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 		loc= 0
 #----------------------------------------------------------------------------
-		self.load_btn= QtGui.QPushButton('Select Files', self)
+		self.load_btn= QtWidgets.QPushButton('Select Files', self)
 		self.load_btn.clicked.connect(self.handleButton)
 		self.layout.addWidget(self.load_btn, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-		self.set_level_label= QtGui.QLabel('level:', self)
+		self.set_level_label= QtWidgets.QLabel('level:', self)
 		self.layout.addWidget(self.set_level_label, loc, 0)
 		loc+=1
 
-		self.enter_level= QtGui.QLineEdit('0', self)
+		self.enter_level= QtWidgets.QLineEdit('0', self)
 		self.enter_level.setFixedWidth(100)
 		self.layout.addWidget(self.enter_level, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-		self.display_level= QtGui.QLabel('level = 00000', self)
+		self.display_level= QtWidgets.QLabel('level = 00000', self)
 		self.layout.addWidget(self.display_level, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-		self.play_btn= QtGui.QPushButton('Play', self)
+		self.play_btn= QtWidgets.QPushButton('Play', self)
 		self.play_btn.setCheckable(True)
 		self.play_btn.clicked.connect(self.play_btn_state)
 		self.layout.addWidget(self.play_btn, loc, 0)
@@ -114,7 +114,7 @@ class Plotter(QtGui.QWidget):
 ##############################################################################
 	def handleButton(self)->None:
 		title    = self.load_btn.text()
-		paths, _ = QtGui.QFileDialog.getOpenFileNames(self, title)
+		paths, _ = QtWidgets.QFileDialog.getOpenFileNames(self, title)
 		for path in paths:
 			self.load_data(path)
 		self.update_plot_level()
@@ -204,7 +204,7 @@ class Plotter(QtGui.QWidget):
 ##############################################################################
 ##############################################################################
 def main():
-	app = QtGui.QApplication(sys.argv)
+	app = QtWidgets.QApplication(sys.argv)
 	plot = Plotter()
 	sys.exit(app.exec_())
 ##############################################################################

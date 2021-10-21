@@ -2,7 +2,7 @@
 import sys
 import numpy as np
 #-----------------------------------------------------------------------------
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtWidgets, QtCore
 import pyqtgraph as pg
 #-----------------------------------------------------------------------------
 ### make a widget for displaying 3D objects
@@ -22,11 +22,11 @@ from io_csv import *
 ## for manipulating hdf5 
 sys.path.insert(1, plot_dir+'/hdf5')
 from io_hdf5 import *
-##############################################################################
-##############################################################################
-class Plotter(QtGui.QWidget):
+#=============================================================================
+#=============================================================================
+class Plotter(QtWidgets.QWidget):
 	keyPressed = QtCore.pyqtSignal(QtCore.QEvent)
-##############################################################################
+#=============================================================================
 ## hard coded parameters for relative size of screen, etc
 	def __init__(self):
 		super(Plotter, self).__init__()
@@ -37,7 +37,7 @@ class Plotter(QtGui.QWidget):
 		self.height = 680
 
 		self.initUI()
-##############################################################################
+#=============================================================================
 	def initUI(self)->None:
 #----------------------------------------------------------------------------
 		self.setWindowTitle('Plotter')
@@ -48,7 +48,7 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 ## Create a grid layout to manage the widgets size and position
 ## allows for plot window to dynamically resize with size of gui
-		self.layout = QtGui.QGridLayout()
+		self.layout = QtWidgets.QGridLayout()
 		self.setLayout(self.layout)
 #----------------------------------------------------------------------------
 ## create Widgets for the gui. loc is the horizontal location,
@@ -56,38 +56,38 @@ class Plotter(QtGui.QWidget):
 #----------------------------------------------------------------------------
 		loc= 0
 #----------------------------------------------------------------------------
-		self.load_btn = QtGui.QPushButton('Select Files', self)
+		self.load_btn = QtWidgets.QPushButton('Select Files', self)
 		self.load_btn.clicked.connect(self.handleButton)
 		self.layout.addWidget(self.load_btn, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-		self.set_step_label = QtGui.QLabel('step:', self)
+		self.set_step_label = QtWidgets.QLabel('step:', self)
 		self.layout.addWidget(self.set_step_label, loc, 0)
 		loc+=1
 
-		self.enter_step = QtGui.QLineEdit('0', self)
+		self.enter_step = QtWidgets.QLineEdit('0', self)
 		self.enter_step.setFixedWidth(100)
 		self.layout.addWidget(self.enter_step, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-		self.set_zoom_label = QtGui.QLabel('zoom:', self)
+		self.set_zoom_label = QtWidgets.QLabel('zoom:', self)
 		self.layout.addWidget(self.set_zoom_label, loc, 0)
 		loc+=1
 
-		self.enter_zoom = QtGui.QLineEdit('1', self)
+		self.enter_zoom = QtWidgets.QLineEdit('1', self)
 		self.enter_zoom.setFixedWidth(100)
 		self.layout.addWidget(self.enter_zoom, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-		self.display_step = QtGui.QLabel('step = 00000', self)
+		self.display_step = QtWidgets.QLabel('step = 00000', self)
 		self.layout.addWidget(self.display_step, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-		self.display_norm = QtGui.QLabel('infty norm = 00000', self)
+		self.display_norm = QtWidgets.QLabel('infty norm = 00000', self)
 		self.layout.addWidget(self.display_norm, loc, 0)
 		loc+=1
 #----------------------------------------------------------------------------
-		self.play_btn = QtGui.QPushButton('Play', self)
+		self.play_btn = QtWidgets.QPushButton('Play', self)
 		self.play_btn.setCheckable(True)
 		self.play_btn.clicked.connect(self.play_btn_state)
 		self.layout.addWidget(self.play_btn, loc, 0)
@@ -121,13 +121,13 @@ class Plotter(QtGui.QWidget):
 		self.pointSymbol = None
 #----------------------------------------------------------------------------
 		self.show()
-##############################################################################
+#=============================================================================
 	def play_btn_state(self)->None:
 		if self.play_btn.isChecked():
 			self.timer.start(self.update_time_ms)
 		else:
 			self.timer.stop()
-##############################################################################
+#=============================================================================
 	def advance_step(self)->None:
 		if(self.step+1 < self.maxsteps):
 			self.step+= 1
@@ -135,14 +135,14 @@ class Plotter(QtGui.QWidget):
 		else:
 			self.timer.stop()
 			self.play_btn.toggle()
-##############################################################################
+#=============================================================================
 	def handleButton(self)->None:
 		title    = self.load_btn.text()
-		paths, _ = QtGui.QFileDialog.getOpenFileNames(self, title)
+		paths, _ = QtWidgets.QFileDialog.getOpenFileNames(self, title)
 		for path in paths:
 			self.load_data(path)
 		self.update_plot_step()
-##############################################################################
+#=============================================================================
 	def load_data(self, filename:str)->None:
 #-----------------------------------------------------------------------------
 		y= np.array([])
@@ -167,15 +167,15 @@ class Plotter(QtGui.QWidget):
 			self.plot_data(self.var_arr[self.plot_num])
 		self.plot_num+= 1
 		print('loaded'+str(filename))
-##############################################################################
+#=============================================================================
 	def prune_string(self, filename:str)->str:
 		loc_start= str(filename).rfind('/')+1
 		loc_end= str(filename).rfind('.')
 		name_str= str(filename)[loc_start:loc_end]
 		return name_str
-##############################################################################
+#=============================================================================
 ## the x-y space is set to be a [-5,5]x[-5,5] box
-##############################################################################
+#=============================================================================
 	def plot_data(self, vals) -> None:
 		if (len(vals.shape)!=3):
 			raise ValueError("len(y.shape)!=3")
@@ -201,7 +201,7 @@ class Plotter(QtGui.QWidget):
 		])
 		self.plots[-1].setData(z=vals[0])
 		self.plotWindow.addItem(self.plots[-1])
-##############################################################################
+#=============================================================================
 	def keyPressEvent(self, event)->None:
 		super(Plotter, self).keyPressEvent(event)
 		self.keyPressed.emit(event)
@@ -209,7 +209,7 @@ class Plotter(QtGui.QWidget):
 		self.zoom = float(str(self.enter_zoom.text()))
 
 		self.update_plot_step()
-##############################################################################
+#=============================================================================
 	def update_plot_step(self)->None:
 		self.compute_norm()
 		self.update_display()
@@ -219,7 +219,7 @@ class Plotter(QtGui.QWidget):
 			self.plots[i].setData(
 				z=self.var_arr[i][self.step, :, :]/(self.norm/self.zoom)
 			)
-##############################################################################
+#=============================================================================
 	def compute_norm(self)->None:
 		self.norm=0
 		for i in range(self.plot_num):
@@ -229,11 +229,11 @@ class Plotter(QtGui.QWidget):
 			)
 		if (self.norm==0):
 			self.norm= 1
-##############################################################################
+#=============================================================================
 	def update_display(self)->None:
 		self.display_step.setText('step = {}'.format(self.step))
 		self.display_norm.setText('infty norm = {:.6e}'.format(self.norm))
-##############################################################################
+#=============================================================================
 ## if press 'q' then closes the application
 ## if press right/left arrow thentime step +1/-1
 	def on_key(self, event)->None:
@@ -242,13 +242,13 @@ class Plotter(QtGui.QWidget):
 			self.deleteLater()
 		else:
 			pass
-##############################################################################
-##############################################################################
+#=============================================================================
+#=============================================================================
 def main():
-	app = QtGui.QApplication(sys.argv)
+	app = QtWidgets.QApplication(sys.argv)
 	plot = Plotter()
 	sys.exit(app.exec_())
-##############################################################################
-##############################################################################
+#=============================================================================
+#=============================================================================
 if __name__ == '__main__':
 	main()
